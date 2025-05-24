@@ -21,23 +21,23 @@ from tqdm import tqdm
 # from shapely.geometry import Polygon
 # import seaborn as sns
 # from urban_access.data.urban_access import create_hexgrid, create_hex_access
-directory = os.chdir(r'C:\Users\Leonardo\OneDrive\Documents\TU_Delft\CodingProjects\UrbanAccessibilityWorld')
+directory = os.chdir(r'C:\Users\Guillermo\Documents\CSH\15_minute_city\city-access-map')
 
 print("loading data")
 # download POIs at https://github.com/MorbZ/OsmPoisPbf/ using uac_filter.txt
 # java -jar osmpois.jar --filterFile uac_filter.txt --printHeader planet.osm.pbf
-df = pd.read_csv("data/raw/poi/poi.csv", sep='|')
+df = pd.read_csv("downloads\planet-250512.csv", sep='|')
 df = df[df.category.str.isnumeric()==True]
 df['category'] = df['category'].astype(float)
 df = df.rename(columns={"category": "poi_type_id"})
 
-poi_types = pd.read_excel("data/raw/poi/poi_code_name_mapper.xlsx")
+poi_types = pd.read_excel("dataPreparation/poi_code_name_mapper.xlsx")
 poi_types = poi_types.replace(" ", np.NaN).dropna()
 
 df = df.merge(poi_types, on="poi_type_id")
 
 # download this data at http://cidportal.jrc.ec.europa.eu/ftp/jrc-opendata/GHSL/GHS_STAT_UCDB2015MT_GLOBE_R2019A/V1-2/
-uc = pd.read_csv("data/raw/GHS_STAT_UCDB2015MT_GLOBE_R2019A/GHS_STAT_UCDB2015MT_GLOBE_R2019A_V1_2.csv", encoding = "ISO-8859-1", engine='python')
+uc = pd.read_csv("downloads/GHS_STAT_UCDB2015MT_GLOBE_R2019A/GHS_STAT_UCDB2015MT_GLOBE_R2019A_V1_2.csv", encoding = "ISO-8859-1", engine='python')
 
 print("preparing data")
 uc = uc[['ID_HDC_G0', "CTR_MN_NM", "UC_NM_MN", "P15", "AREA"]].dropna()
@@ -126,7 +126,7 @@ print("beginning loop")
 # for city in df_keep["ID_HDC_G0"].unique():
 
 # processed cities
-p_cities = [city.split(".")[0] for city in os.listdir("G:/UrbanAccessibilityWorld/data/processed/access/")]
+p_cities = [city.split(".")[0] for city in os.listdir("data/processed/access/")]
 # remaning cities
 r_cities = list(df_keep[~df_keep["ID_HDC_G0"].isin(p_cities)].groupby("ID_HDC_G0").mean().sort_values("AREA", ascending=False).reset_index().ID_HDC_G0.unique())
 
@@ -151,4 +151,4 @@ for city in tqdm(r_cities):#[2:]
     network = osm.pdna_network_from_bbox(lat_min, lng_min, lat_max, lng_max, network_type='walk')
     access = create_access_gdf(pois = pois, network = network, maxdist = 5000)
     
-    access.to_csv(f"G:/UrbanAccessibilityWorld/data/processed/access/{city}.csv")
+    access.to_csv(f"data/processed/access/{city}.csv")
