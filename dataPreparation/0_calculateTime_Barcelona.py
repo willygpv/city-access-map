@@ -114,8 +114,8 @@ print("beginning loop")
 p_cities = [city.split(".")[0] for city in os.listdir("data/processed/access/")]
 # # remaning cities (uncomment and use this line to process remaining cities)
 # r_cities = list(df_keep[~df_keep["ID_HDC_G0"].isin(p_cities)].groupby("ID_HDC_G0").mean().sort_values("AREA", ascending=False).reset_index().ID_HDC_G0.unique())
-# only process Barcelona (ID 2051) for demonstration, 945 NY, 154 CDMX, 11862 jakarta, 2565 abuja
-r_cities = [154, 11862]#[2051, 945, 154, 11862, 2565]
+# only process Barcelona (ID 2051) for demonstration, 945 NY, 154 CDMX, 11862 jakarta, 2565 abuja, 2559 milan
+r_cities = [2559, 2565]#[2051, 945, 154, 11862, 2565]
 
 for city in tqdm(r_cities, desc="Processing cities"):
     start_time = time.time() # Start timer for the current city
